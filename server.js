@@ -162,7 +162,10 @@ app.post('/api/conversations/:id/simulate', (req, res) => {
 
   const replyUser = SIM_USERS[Math.floor(Math.random() * SIM_USERS.length)];
   const replyText = SIM_REPLIES[Math.floor(Math.random() * SIM_REPLIES.length)];
-  const newComment = { id: 'u' + Math.random().toString(36).slice(2, 9), user: replyUser, text: replyText, parentId: null };
+  // reply to a random existing comment (not one of theirs) so it @-mentions someone real
+  const candidates = conv.thread.filter(c => c.user !== replyUser);
+  const parent = candidates[Math.floor(Math.random() * candidates.length)];
+  const newComment = { id: 'u' + Math.random().toString(36).slice(2, 9), user: replyUser, text: replyText, parentId: parent ? parent.id : null };
   conv.thread.push(newComment);
 
   const wasModActive = conv._modActive;
