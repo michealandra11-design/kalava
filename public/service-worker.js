@@ -1,5 +1,5 @@
-const CACHE = 'kalava-shell-v1';
-const SHELL = ['/', '/manifest.json', '/icons/icon.svg'];
+const CACHE = 'kalava-shell-v2';
+const SHELL = ['/manifest.json', '/icons/icon.svg'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
@@ -13,10 +13,15 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// network-first for API calls (always want live data), cache-first for the app shell
+// network-first for API calls AND the app shell itself, so updates always show
+// immediately; only fall back to cache when genuinely offline.
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/socket.io/')) {
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    return;
+  }
+  if (e.request.mode === 'navigate' || url.pathname === '/') {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
