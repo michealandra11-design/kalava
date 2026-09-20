@@ -1,0 +1,57 @@
+{
+  "users": {
+    "tobi":     { "name": "Tobi Adewale",   "handle": "@tobi_lagos",   "loc": "🇳🇬 Lagos",                              "rep": "green", "avatar": "https://i.pravatar.cc/150?img=12", "bio": "Food takes with no notes. Product designer by day.", "followers": 8900, "following": 1204, "verified": false },
+    "kwabena":  { "name": "Kwabena Owusu",  "handle": "@kwabena_accra","loc": "🇬🇭 Accra",                              "rep": "green", "avatar": "https://i.pravatar.cc/150?img=13", "bio": "Accra born and raised. I defend jollof with my whole chest.", "followers": 5400, "following": 812, "verified": false },
+    "amara":    { "name": "Amara Chukwu",   "handle": "@amarafit",     "loc": "🇳🇬 Lagos",                              "rep": "green", "avatar": "https://i.pravatar.cc/150?img=47", "bio": "Dancer. Choreographer. Probably filming a reel right now.", "followers": 22100, "following": 340, "verified": true },
+    "zanele":   { "name": "Zanele Mokoena", "handle": "@zanele_jozi",  "loc": "🇿🇦 Johannesburg",                       "rep": "green", "avatar": "https://i.pravatar.cc/150?img=44", "bio": "Mapping Joburg one plate at a time.", "followers": 3100, "following": 560, "verified": false },
+    "wanjiru":  { "name": "Wanjiru Kamau",  "handle": "@wanjiru_nrb",  "loc": "🇰🇪 Nairobi",                            "rep": "green", "avatar": "https://i.pravatar.cc/150?img=25", "bio": "Nairobi nights, matatu culture, and unpopular opinions.", "followers": 6700, "following": 990, "verified": false },
+    "kwame":    { "name": "Kwame Boateng",  "handle": "@kwame_fintech","loc": "🇬🇭 Accra",                              "rep": "green", "avatar": "https://i.pravatar.cc/150?img=15", "bio": "Fintech builder. I have opinions about valuations.", "followers": 14300, "following": 421, "verified": true },
+    "fatou":    { "name": "Fatou Diallo",   "handle": "@fatou_dkr",    "loc": "🇸🇳 Dakar",                              "rep": "green", "avatar": "https://i.pravatar.cc/150?img=29", "bio": "Dakar. History nerd. Here to correct the record on jollof.", "followers": 2800, "following": 640, "verified": false },
+    "chidi":    { "name": "Chidi Eze",      "loc": "🇺🇸 Atlanta · Nigerian diaspora", "handle": "@chidi_atl",           "rep": "red",   "avatar": "https://i.pravatar.cc/150?img=8",  "bio": "Say something wrong on here and find out.", "followers": 900, "following": 210, "verified": false },
+    "amaka":    { "name": "Amaka Obi",      "handle": "@amaka_reads",  "loc": "🇳🇬 Abuja",                              "rep": "green", "avatar": "https://i.pravatar.cc/150?img=32", "bio": "Reads everything. Sources everything.", "followers": 4100, "following": 380, "verified": false },
+    "sipho":    { "name": "Sipho Ndlovu",   "handle": "@sipho_cpt",    "loc": "🇿🇦 Cape Town",                          "rep": "green", "avatar": "https://i.pravatar.cc/150?img=17", "bio": "Cape Town. Here for the chaos, staying for the culture.", "followers": 1900, "following": 275, "verified": false },
+    "moderator":{ "name": "Kalava Moderation", "handle": "@kalava_mod","loc": "Community Team",                        "rep": "green", "avatar": null, "bio": "Neutral dispute handling for Kalava conversations.", "followers": 0, "following": 0, "verified": true, "isMod": true }
+  },
+  "feed": [
+    { "kind": "take", "id": "jollof", "user": "tobi", "text": "Jollof rice is overrated. There, I said it. Fight me.", "likes": 1900, "reposts": 118 },
+    { "kind": "video", "user": "amara", "caption": "POV: the aunty at the party said \"one more small small\" 😩", "tag": "Afrobeats · Dance", "likes": 12400, "reposts": 88, "media": "https://picsum.photos/seed/afrobeats-dance-floor/800/1000" },
+    { "kind": "chaos", "id": "startups", "topic": "Are African startups overvalued?", "user": "kwame" },
+    { "kind": "post", "user": "zanele", "text": "Spent the weekend mapping Joburg's best hidden kota spots. Thread with photos below 👇", "likes": 890, "reposts": 12, "media": "https://picsum.photos/seed/joburg-kota-street-food/800/500" },
+    { "kind": "poll", "user": "wanjiru", "question": "Best nightlife on the continent right now?", "options": [["Lagos", 41], ["Nairobi", 27], ["Accra", 19], ["Cape Town", 13]] },
+    { "kind": "question", "user": "fatou", "text": "What are the strongest CS programs on the continent right now? Trying to help my cousin pick.", "likes": 340, "reposts": 22 }
+  ],
+  "conversations": {
+    "jollof": {
+      "topic": "Jollof rice is overrated.",
+      "author": "tobi",
+      "media": "https://picsum.photos/seed/jollof-rice-plate-close/800/500",
+      "branches": ["Main thread", "Origin debate", "Ghana vs Nigeria", "Side jokes"],
+      "createdAt": -7800,
+      "thread": [
+        { "id": "c1", "user": "tobi", "text": "Jollof rice is overrated. There, I said it. Fight me.", "tag": "take", "parentId": null },
+        { "id": "c2", "user": "kwabena", "text": "You're only saying that because you've never had proper jollof — and I mean the Ghanaian kind.", "parentId": "c1" },
+        { "id": "c3", "user": "amara", "text": "Both of you are wrong actually. Here's why the whole framing is off —", "evidence": true, "parentId": "c2" },
+        { "id": "c4", "user": "wanjiru", "text": "Here comes the Ghanaian delegation 😭", "parentId": "c3" },
+        { "id": "c5", "user": "sipho", "text": "No. We are absolutely putting jollof into this.", "parentId": "c3" },
+        { "id": "c6", "user": "fatou", "text": "Genuinely curious why this always turns into Nigeria vs Ghana when Senegal literally invented the dish", "parentId": "c1" },
+        { "id": "c7", "user": "kwame", "text": "This is the actual answer everyone is dodging lol", "parentId": "c6" }
+      ]
+    },
+    "startups": {
+      "topic": "Are African startups overvalued?",
+      "author": "kwame",
+      "media": null,
+      "branches": ["Main thread", "Fintech specifically", "Investor take", "Counter-evidence"],
+      "createdAt": -21700,
+      "thread": [
+        { "id": "s1", "user": "kwame", "text": "Take: a lot of African fintech valuations right now are priced off diaspora hype, not underlying unit economics.", "tag": "take", "parentId": null },
+        { "id": "s2", "user": "chidi", "text": "This is such an outsider take honestly, you clearly don't track the actual funding rounds", "parentId": "s1" },
+        { "id": "s3", "user": "amaka", "text": "I mean... he's not wrong about at least 3 companies I can think of", "evidence": true, "parentId": "s1" },
+        { "id": "s4", "user": "zanele", "text": "Naming them would actually move this conversation forward instead of vague shade", "parentId": "s3" }
+      ],
+      "seedComments": 260,
+      "seedParticipants": 42,
+      "forceModerator": true
+    }
+  }
+}
