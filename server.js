@@ -73,6 +73,7 @@ function publicConversation(id) {
     thread: conv.thread.map(hydrateComment),
     comments: conv._commentCount,
     participants: conv._participants,
+    participantsPreview: participantsPreview(conv),
     started,
     state,
     modActive: conv._modActive,
@@ -81,6 +82,22 @@ function publicConversation(id) {
 function hydrateComment(c) {
   const u = db.users[c.user] || { name: c.user, handle: '@' + c.user };
   return { ...c, authorName: u.name, authorHandle: u.handle, authorAvatar: u.avatar, authorRep: u.rep, isMod: !!u.isMod };
+}
+
+// the distinct handles actually visible in a thread right now — what the Chaos
+// Engine surfaces as "who's in here", not just a raw participant count
+function participantsPreview(conv) {
+  const seen = new Set();
+  const list = [];
+  for (const c of conv.thread) {
+    if (seen.has(c.user)) continue;
+    seen.add(c.user);
+    const u = db.users[c.user];
+    if (!u) continue;
+    list.push({ handle: u.handle, avatar: u.avatar, name: u.name, isMod: !!u.isMod });
+    if (list.length >= 6) break;
+  }
+  return list;
 }
 
 const MOD_CLARIFICATION = "Moderator clarification: for the record, food preference is subjective and not something we adjudicate. The factual claim being debated — dish origin — traces to Senegalese thieboudienne; several culinary historians trace the Nigerian and Ghanaian variants from there. That's context, not a ranking.";
@@ -112,6 +129,7 @@ app.get('/api/feed', (req, res) => {
       base.state = conv.state;
       base.comments = conv.comments;
       base.participants = conv.participants;
+      base.participantsPreview = conv.participantsPreview;
       base.started = conv.started;
     }
     return base;
@@ -145,7 +163,7 @@ app.post('/api/conversations/:id/comments', (req, res) => {
   const payload = publicConversation(req.params.id);
   saveDb();
   io.to('conv:' + req.params.id).emit('comment:new', hydrateComment(comment));
-  io.to('conv:' + req.params.id).emit('state:update', { state: payload.state, comments: payload.comments, participants: payload.participants, started: payload.started });
+  io.to('conv:' + req.params.id).emit('state:update', { state: payload.state, comments: payload.comments, participants: payload.participants, participantsPreview: payload.participantsPreview, started: payload.started });
   res.json({ conversation: payload });
 });
 
@@ -183,7 +201,7 @@ app.post('/api/conversations/:id/simulate', (req, res) => {
 
   io.to('conv:' + req.params.id).emit('comment:new', hydrateComment(newComment));
   if (modComment) io.to('conv:' + req.params.id).emit('comment:new', hydrateComment(modComment));
-  io.to('conv:' + req.params.id).emit('state:update', { state: payload.state, comments: payload.comments, participants: payload.participants, started: payload.started, modActive: payload.modActive });
+  io.to('conv:' + req.params.id).emit('state:update', { state: payload.state, comments: payload.comments, participants: payload.participants, participantsPreview: payload.participantsPreview, started: payload.started, modActive: payload.modActive });
 
   res.json({ conversation: payload, rotatingLabel: CHAOS_ROTATING[Math.floor(Math.random() * CHAOS_ROTATING.length)] });
 });
@@ -191,7 +209,7 @@ app.post('/api/conversations/:id/simulate', (req, res) => {
 app.get('/api/discover', (req, res) => {
   const trending = Object.entries(db.conversations).map(([id, c]) => {
     const conv = publicConversation(id);
-    return { id, topic: conv.topic, comments: conv.comments, state: conv.state };
+    return { id, topic: conv.topic, comments: conv.comments, state: conv.state, participantsPreview: conv.participantsPreview };
   });
   res.json({
     trending,

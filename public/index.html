@@ -121,6 +121,15 @@ body.light .chaos-card{ border-color:#F0BFC5; background:linear-gradient(165deg,
 body.light .chaos-metrics{ color:var(--paper-text-dim); }
 .chaos-metrics b{ color:var(--text); font-size:14px; display:block; font-family:var(--font-display); }
 body.light .chaos-metrics b{ color:var(--paper-text); }
+.avatar-stack{ display:flex; align-items:center; margin:8px 0; }
+.stack-avatar{ width:24px; height:24px; border-radius:50%; object-fit:cover; background:var(--surface-3); border:2px solid var(--surface-2); }
+body.light .stack-avatar{ border-color:var(--paper-surface); }
+.chaos-card .stack-avatar{ border-color:#241119; }
+body.light .chaos-card .stack-avatar{ border-color:#FCE9EB; }
+.stack-more{ font-size:10.5px; font-weight:700; color:var(--text-faint); margin-left:8px; }
+body.light .stack-more{ color:var(--paper-text-dim); }
+.stack-names{ font-size:11.5px; color:var(--text-faint); margin-left:8px; }
+body.light .stack-names{ color:var(--paper-text-dim); }
 
 .section-label{ font-size:15px; font-weight:700; margin:22px 18px 10px; font-family:var(--font-display); display:flex; align-items:center; justify-content:space-between; }
 .section-sub{ font-size:12px; color:var(--text-faint); font-weight:500; font-family:var(--font-body); }
@@ -336,6 +345,19 @@ function stateBadge(s){
 }
 function fmtNum(n){ if(n===undefined||n===null) return ''; return n>=1000 ? (n/1000).toFixed(1).replace(/\.0$/,'')+'K' : String(n); }
 
+function avatarStackHtml(list, total, opts){
+  opts = opts || {};
+  if(!list || !list.length) return '';
+  const shown = list.slice(0, opts.max || 4);
+  const extra = Math.max(0, (total || list.length) - shown.length);
+  const names = opts.showNames ? list.slice(0,2).map(u=>u.handle).join(', ') + (list.length>2 ? ` +${list.length-2} more` : '') : '';
+  return `<div class="avatar-stack" onclick="${opts.onclick||''}">
+    ${shown.map((u,i)=>`<img class="stack-avatar" style="z-index:${10-i}; margin-left:${i===0?0:-9}px;" src="${u.avatar||''}" title="${u.handle||''}" alt="${u.handle||''}">`).join('')}
+    ${extra>0?`<span class="stack-more">+${extra} in here</span>`:''}
+    ${names?`<span class="stack-names">${names}</span>`:''}
+  </div>`;
+}
+
 function feedCard(item){
   const u = { name:item.authorName, avatar:item.authorAvatar, isMod:false };
   const sub = `${item.authorHandle} · ${item.authorLoc||''}`;
@@ -345,6 +367,7 @@ function feedCard(item){
       <div class="take-label">TAKE</div>
       <div class="take-text">"${item.text}"</div>
       <div class="state-row" style="margin-top:12px;">${stateBadge(item.state)}</div>
+      ${avatarStackHtml(item.participantsPreview, item.participants, {showNames:true})}
       ${statRow(item)}
       ${actionRow()}
     </div>`;
@@ -362,7 +385,8 @@ function feedCard(item){
     return `<div class="card chaos-card" onclick="openConversation('${item.id}')">
       <div class="chaos-header"><span class="chaos-title">🌀 CHAOS MODE</span>${item.state==='MOD'?'<span class="badge-mod">'+ICONS.shield+' MOD ACTIVE</span>':''}</div>
       <div class="chaos-topic">"${item.topic}"</div>
-      <div class="author-sub" style="margin-bottom:10px;">started by ${item.authorHandle}</div>
+      <div class="author-sub" style="margin-bottom:2px;">started by ${item.authorHandle}</div>
+      ${avatarStackHtml(item.participantsPreview, item.participants, {showNames:true})}
       <div class="chaos-metrics">
         <div><b>${fmtNum(item.comments)}</b>comments</div>
         <div><b>${item.participants}</b>participants</div>
@@ -519,7 +543,7 @@ function renderMainView(){
       <div class="scroll">
         <div class="section-label">Conversations heating up<span class="section-sub">live</span></div>
         <div class="hscroll">
-          ${d.trending.map(t=>`<div class="chip-card" onclick="openConversation('${t.id}')"><div style="font-size:16px;">🔥</div><div class="n">${t.topic}</div><div class="m">${fmtNum(t.comments)} comments</div></div>`).join('')}
+          ${d.trending.map(t=>`<div class="chip-card" onclick="openConversation('${t.id}')"><div style="font-size:16px;">🔥</div><div class="n">${t.topic}</div><div class="m">${fmtNum(t.comments)} comments</div>${avatarStackHtml(t.participantsPreview, null, {max:3})}</div>`).join('')}
         </div>
         <div class="section-label">Africa Now</div>
         <div class="hscroll">${d.cities.map(t=>`<div class="chip-card"><div class="n">${t[0]}</div><div class="m">${t[1]}</div></div>`).join('')}</div>
@@ -571,6 +595,7 @@ function renderConversationView(){
       <span>active <b id="mStarted">${conv.started}</b></span>
     </div>
     <div id="modBannerWrap">${conv.modActive? `<div class="mod-banner">${ICONS.shield} Moderator joined this conversation to help settle a factual dispute.</div>`:''}</div>
+    <div style="padding:0 18px;" id="participantsPreview">${avatarStackHtml(conv.participantsPreview, conv.participants, {showNames:true})}</div>
     <div class="branch-nav">
       ${conv.branches.map((b,i)=>`<div class="branch-chip ${state.convBranch===i?'on':''}" onclick="setBranch(${i})">${b}${i>0?' · 342':''}</div>`).join('')}
     </div>
@@ -773,6 +798,7 @@ socket.on('state:update', (upd)=>{
   state.activeConv.state = upd.state;
   state.activeConv.comments = upd.comments;
   state.activeConv.participants = upd.participants;
+  if(upd.participantsPreview) state.activeConv.participantsPreview = upd.participantsPreview;
   state.activeConv.started = upd.started;
   if(upd.modActive!==undefined) state.activeConv.modActive = upd.modActive;
   render();
