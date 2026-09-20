@@ -184,6 +184,7 @@ body.light .comment-bubble.mod{ background:#E4F7F0; border-color:#B6E5D5; }
 .comment-actions{ display:flex; gap:14px; margin-top:6px; padding-left:2px; font-size:11.5px; color:var(--text-faint); }
 body.light .comment-actions{ color:var(--paper-text-dim); }
 .evidence-tag{ display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; color:var(--violet); margin-bottom:5px; }
+.mention{ color:#5EA8E8; font-weight:700; cursor:pointer; }
 .nested{ margin-left:28px; }
 
 .mod-banner{ margin:0 14px 12px; padding:12px 14px; border-radius:14px; background:var(--mod-dim); border:1px solid #2A6653; display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:600; color:var(--mod); animation:riseIn .4s ease; }
@@ -435,6 +436,8 @@ function renderComment(c, allComments, depth){
   const bubbleClasses = ['comment-bubble'];
   if(c.isMod) bubbleClasses.push('mod');
   if(c.evidence) bubbleClasses.push('evidence');
+  const parent = c.parentId ? allComments.find(x=>x.id===c.parentId) : null;
+  const mentionHtml = parent ? `<span class="mention" onclick="event.stopPropagation(); document.getElementById('comment-${parent.id}')?.scrollIntoView({behavior:'smooth', block:'center'})">@${(parent.authorHandle||'').replace('@','')}</span> ` : '';
   const inner = `
     <div class="comment" id="comment-${c.id}">
       ${avatarImg(u, 30)}
@@ -445,7 +448,7 @@ function renderComment(c, allComments, depth){
         </div>
         <div class="${bubbleClasses.join(' ')}">
           ${c.evidence?'<div class="evidence-tag">📎 EVIDENCE ATTACHED</div>':''}
-          <div class="comment-text">${c.text}</div>
+          <div class="comment-text">${mentionHtml}${c.text}</div>
         </div>
         <div class="comment-actions">
           <span>${ICONS.heart} Like</span>
